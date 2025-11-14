@@ -1,4 +1,4 @@
-<img width="1499" height="604" alt="image" src="https://github.com/user-attachments/assets/5ba1661e-6e48-4844-8521-51b18cbc14ba" /><img width="1495" height="599" alt="image" src="https://github.com/user-attachments/assets/b1d1872b-caa7-40de-a25d-d969ae699365" />Proyecto 3 – Arquitectura Batch para Big Data (COVID-19 Colombia)
+Proyecto 3 – Arquitectura Batch para Big Data (COVID-19 Colombia)
 Universidad EAFIT
 ST0263 – Tópicos Especiales en Telemática
 2025-2
@@ -180,6 +180,7 @@ Esto es imposible de implementar API Gateway y Lambda en este entorno.
 Se entrega el código necesario, pero el despliegue no se puede realizar debido a limitaciones de la plataforma.
 
 9. Ejecución del pipeline
+<img width="1170" height="363" alt="image" src="https://github.com/user-attachments/assets/c4db1e89-f562-4da2-917e-8f25f5916a6c" />
 
 En una instancia EC2 con credenciales configuradas:
 
