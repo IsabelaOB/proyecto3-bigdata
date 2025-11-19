@@ -15,7 +15,7 @@ CLUSTER_ID=$(aws emr create-cluster \
 aws emr add-steps \
   --cluster-id $CLUSTER_ID \
   --steps \
-Type=Spark,Name="ETL-COVID",ActionOnFailure=CONTINUE,Args=[s3://proyecto-covid/scripts/etl_covid.py] \
-Type=Spark,Name="COVID-ANALYSIS",ActionOnFailure=CONTINUE,Args=[s3://proyecto-covid/scripts/etl_analysis.py]
+Type=Spark,Name="ETL-COVID",ActionOnFailure=CONTINUE,Args=[--deploy-mode,cluster,--master,yarn,s3://proyecto-covid/scripts/etl_covid.py] \
+Type=Spark,Name="COVID-ANALYSIS",ActionOnFailure=CONTINUE,Args=[--deploy-mode,cluster,--master,yarn,s3://proyecto-covid/scripts/etl_analysis.py]
 
 echo "Pipeline lanzado en cluster: $CLUSTER_ID"

@@ -10,7 +10,7 @@ df = spark.read.parquet(trusted_path)
 
 df_summary = (
     df.groupBy(
-        "Nombre departamento",
+        "departamento_nom",
         "departamento",
         "camas",
         "ucis"
@@ -22,9 +22,14 @@ df_summary = (
     )
     .withColumn(
         "tasa_ocupacion_camas_estimada",
-        (F.col("casos_totales") / F.col("camas")).cast("double")
+        F.when((F.col("camas").isNotNull()) & (F.col("camas") > 0),
+               (F.col("casos_totales") / F.col("camas")).cast("double"))
+         .otherwise(None)
     )
 )
+
+# Estandarizar nombre para consultas (ej. Athena)
+df_summary = df_summary.withColumnRenamed("departamento_nom", "nombre_departamento")
 
 df_summary.write.mode("overwrite").parquet(refined_output)
 

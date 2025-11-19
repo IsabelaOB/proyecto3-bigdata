@@ -199,3 +199,93 @@ ETL → Confiable
 Análisis → Refinado
 
 Resultados disponibles para Athena
+
+**Despliegue y ejecución (resumen rápido)**
+
+- **Requisitos**: AWS CLI configurado con credenciales (perfil por defecto), permisos para crear clusters EMR y S3 con bucket `proyecto-covid`.
+- **Ejecutar pipeline (local/EC2)**: dar permisos y lanzar `run_pipeline.sh` desde una máquina con AWS CLI configurado:
+
+```bash
+chmod +x run_pipeline.sh
+./run_pipeline.sh
+```
+
+- **Notas sobre `run_pipeline.sh`**: los Steps añadidos usan `spark-submit` en `--deploy-mode cluster` (--master yarn). Asegúrate de que los scripts Spark (`s3://proyecto-covid/scripts/etl_covid.py` y `etl_analysis.py`) estén disponibles en ese bucket y sean ejecutables por el cluster.
+
+- **Crear tabla en Athena**: se incluye un script DDL en `sql/athena_create_tables.sql`. Ejecuta este SQL en la consola de Athena o mediante CLI para crear la base y tabla externa apuntando a `s3://proyecto-covid/refined/covid_summary/`.
+
+```sql
+-- desde la carpeta del repo
+aws s3 cp sql/athena_create_tables.sql s3://proyecto-covid/scripts/athena_create_tables.sql
+-- (Luego en Athena: ejecutar el contenido de sql/athena_create_tables.sql)
+```
+
+Si prefieres que cree la tabla desde la CLI usando Athena directamente, puedo añadir un ejemplo con `aws athena start-query-execution`.
+ 
+**Automatizar DDL desde la CLI**
+
+Incluí un script para ejecutar el DDL de Athena desde una máquina con `aws` CLI:
+
+```bash
+chmod +x scripts/create_athena_table.sh
+./scripts/create_athena_table.sh
+```
+
+Este script ejecuta `sql/athena_create_tables.sql` y espera a que la ejecución termine. Asegúrate de que el bucket `s3://proyecto-covid/athena-results/` exista o cámbialo en el script.
+
+**API (Lambda + API Gateway) - despliegue rápido con SAM**
+
+He incluido una función Lambda y una plantilla SAM en la carpeta `api/` que expone un endpoint GET `/covid-summary`.
+
+- **Pre-requisitos**: `aws` CLI configurado, `sam` CLI instalado y permisos para crear Lambda, API Gateway y roles.
+
+- **Pasos de despliegue**:
+
+```bash
+cd api
+sam build
+sam deploy --guided
+```
+
+En la fase `--guided` define el stack name, región y confirma la creación de recursos. La Lambda usa Athena para ejecutar consultas y devuelve JSON. Puedes probar la API desde la consola de API Gateway o con `curl`.
+
+Ejemplo de consulta (devolverá top 10 departamentos por casos):
+
+```bash
+curl https://{API_ID}.execute-api.{region}.amazonaws.com/Prod/covid-summary
+```
+
+Para filtrar por departamento:
+
+```bash
+curl "https://{API_ID}.execute-api.{region}.amazonaws.com/Prod/covid-summary?departamento=Antioquia"
+```
+
+Si prefieres un servicio local (FastAPI) en vez de Lambda, puedo agregarlo como alternativa para demostración local.
+ 
+**API local alternativa (FastAPI)**
+
+He incluido una API local en `api/` que replica el comportamiento de la Lambda. Esta opción es útil si `sam deploy` falla en AWS Academy por restricciones IAM o si necesitas una demo local.
+
+- **Archivos**:
+	- `api/fastapi_app.py` : código FastAPI.
+	- `api/requirements.txt` : dependencias (`fastapi`, `uvicorn`, `boto3`, `pandas`, `pyarrow`).
+	- `api/run_local.ps1` : script de ejecución para PowerShell (Windows).
+
+- **Ejecutar localmente (PowerShell)**:
+
+```powershell
+cd api
+.\run_local.ps1
+```
+
+- **Comportamiento**:
+	- Si la variable de entorno `LOCAL_PARQUET_PATH` apunta a un archivo o carpeta Parquet local (por ejemplo `./data/covid_summary/`), la API leerá los Parquet localmente y responderá sin usar Athena.
+	- Si no hay Parquet local, la API hará consultas a Athena usando las mismas consultas que la Lambda.
+
+Ejemplo de llamada local:
+
+```bash
+curl "http://localhost:8000/covid-summary"
+curl "http://localhost:8000/covid-summary?departamento=Antioquia"
+```

@@ -19,6 +19,6 @@ df_join = df_covid.join(
     "left"
 )
 
-df_join.write.mode("overwrite").parquet("s3://proyecto-covid/trusted/covid_hospitales/")
+df_join.write.mode("overwrite").parquet("s3://proyecto-covid/trusted/covid_final_joined/")
 
 spark.stop()

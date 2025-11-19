@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Lambda + API Gateway para exponer resumen COVID desde Athena
+Globals:
+  Function:
+    Timeout: 60
+Resources:
+  CovidSummaryFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: covid-summary-api
+      Runtime: python3.9
+      Handler: lambda_function.handler
+      CodeUri: .
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - athena:StartQueryExecution
+                - athena:GetQueryExecution
+                - athena:GetQueryResults
+              Resource: '*'
+            - Effect: Allow
+              Action:
+                - s3:PutObject
+                - s3:GetObject
+                - s3:ListBucket
+              Resource: '*'
+      Environment:
+        Variables:
+          ATHENA_OUTPUT: 's3://proyecto-covid/athena-results/'
+          ATHENA_DATABASE: 'covid_analytics'
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /covid-summary
+            Method: get
