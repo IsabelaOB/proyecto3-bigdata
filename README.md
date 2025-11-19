@@ -289,3 +289,27 @@ Ejemplo de llamada local:
 curl "http://localhost:8000/covid-summary"
 curl "http://localhost:8000/covid-summary?departamento=Antioquia"
 ```
+
+**Ejecutar la API en Docker**
+
+Se incluye un `Dockerfile` en `api/` para ejecutar la API local dentro de un contenedor.
+
+1) Construir la imagen:
+
+```bash
+cd api
+docker build -t covid-summary-api:latest .
+```
+
+2) Ejecutar el contenedor (puerto 8000):
+
+```bash
+docker run --rm -p 8000:8000 \
+	-e LOCAL_PARQUET_PATH="/data/covid_summary" \
+	-v /ruta/local/a/parquets:/data/covid_summary \
+	covid-summary-api:latest
+```
+
+Notas:
+- Si quieres que la API use Parquet local dentro del contenedor, monta la carpeta con `-v /ruta/local/a/parquets:/data/covid_summary` y pasa la variable `LOCAL_PARQUET_PATH=/data/covid_summary`.
+- Si la variable `LOCAL_PARQUET_PATH` no está definida o los Parquet no existen, la API consultará Athena (requiere credenciales AWS en el entorno del contenedor o usar un role de IAM en ECS).

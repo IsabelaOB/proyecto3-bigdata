@@ -1,0 +1,71 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+pip-wheel-metadata/
+
+# Virtual environments
+venv/
+ENV/
+.venv/
+env/
+venv.bak/
+api/.venv/
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage
+.pytest_cache/
+htmlcov/
+coverage.xml
+
+# Jupyter
+.ipynb_checkpoints
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+ingesta.log
+export_hospitales.log
+
+# AWS credentials and SAM build artifacts
+.aws/
+.aws-sam/
+
+# Environment variables
+.env
+.env.*
+
+# Temporary files
+tmp/
+/tmp/
+*.tmp
+
+# Data (ignore large data generated locally). Keep sample_data committed if desired.
+# If you want to ignore all parquet files uncomment the next line:
+# *.parquet
+
+# Docker
+*.tgz
+
+# Misc
+node_modules/

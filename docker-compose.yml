@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  gen:
+    image: python:3.10-slim
+    working_dir: /app
+    volumes:
+      - ./:/app
+    command: python scripts/generate_sample_parquet.py
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "8000:8000"
+    environment:
+      LOCAL_PARQUET_PATH: /data/covid_summary
+    volumes:
+      - ./api/sample_data:/data/covid_summary
