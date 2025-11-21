@@ -5,6 +5,7 @@ ST0263 – Tópicos Especiales en Telemática
 
 1. Descripción general
 Este proyecto implementa una arquitectura batch completa para el procesamiento de datos de COVID-19 en Colombia, siguiendo todas las etapas del ciclo de vida de un proceso analítico:
+<img width="1536" height="1024" alt="image" src="https://github.com/user-attachments/assets/bc42cb95-05e4-4f9a-9410-9a90c05451cf" />
 
 Captura automatizada de datos desde:
 Dataset/API del Ministerio de Salud.
